@@ -1,32 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using CoreEscuela.Entidades;
+using CoreEscuela.Util;
 using static System.Console;
 
-namespace Etapa1
+namespace CoreEscuela
 {
     class Program
     {
         static void Main(string[] args)
-        {
-            var escuela = new Escuela("Industrial", 1924, TiposEscuela.Secundaria,
-                                        ciudad: "Posadas", pais: "Argentina"
-                                        );
+        { 
+            var engine = new EscuelaEngine(); 
+            engine.Inicializar();
 
-            escuela.Cursos = new Curso[]
-            {
-                new Curso() { Nombre = "101" },
-                new Curso() { Nombre = "201" },
-                new Curso() { Nombre = "301" }
-            };
+            Printer.DibujarTitulo("Bienvenidos a la escuela");
 
-            ImprimirCursosEscuela(escuela);
+            ImprimirCursosEscuela(engine.Escuela);
         }
 
         private static void ImprimirCursosEscuela(Escuela escuela)
         {
-            WriteLine("====================");
-            WriteLine("Cursos de la escuela");
-            WriteLine("====================");
+
+            Printer.DibujarTitulo("Cursos de la escuela");
 
             if (escuela != null && escuela.Cursos != null)
             {
