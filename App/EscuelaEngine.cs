@@ -5,8 +5,14 @@ using CoreEscuela.Entidades;
 
 namespace CoreEscuela
 {
-    public class EscuelaEngine
+    public sealed class EscuelaEngine
     {
+        public EscuelaEngine(Escuela escuela)
+        {
+            this.Escuela = escuela;
+
+        }
+
         public Escuela Escuela { get; set; }
         public EscuelaEngine()
         {
@@ -19,49 +25,99 @@ namespace CoreEscuela
                             pais: "Argentina");
 
             CargarCursos();
+            CargarAsignaturas();
+            CargarEvaluaciones();
 
+        }
+
+        #region Métodos de carga
+        private void CargarAsignaturas()
+        {
             foreach (var curso in Escuela.Cursos)
             {
-                curso.Alumnos.AddRange(CargarAlumnos());
+                var listaAsignaturas = new List<Asignatura>()
+                {
+                            new Asignatura{Nombre="Matemáticas"} ,
+                            new Asignatura{Nombre="Educación Física"},
+                            new Asignatura{Nombre="Castellano"},
+                            new Asignatura{Nombre="Ciencias Naturales"}
+                };
+                curso.Asignaturas = listaAsignaturas;
             }
-
-            CargarAsignaturas();
-            
-            CargarEvaluaciones();
-            
         }
 
         private void CargarEvaluaciones()
         {
-            throw new NotImplementedException();
-        }
-
-        private void CargarAsignaturas()
-        {
-            foreach (var Curso in Escuela.Cursos)
-            {
-                List<Asignatura> listaAsignaturas = new List<Asignatura>()
+            foreach (var curso in Escuela.Cursos)
+            {                
+                foreach (var asignatura in curso.Asignaturas)
                 {
-                    new Asignatura { Nombre="Matemática" },
-                    new Asignatura { Nombre="Física" },
-                    new Asignatura { Nombre="Ingles" },
-                    new Asignatura { Nombre="Química" }
-                }; 
-                curso.Asignaturas.AddRange(listaAsignaturas);
+                    foreach (var alumno in curso.Alumnos)
+                    {
+                        Random rnd = new Random();
+
+                        for (int i = 0; i < 5; i++)
+                        {
+                            var ev = new Evaluación
+                            {
+                                Asignatura = asignatura,
+                                Nombre = $"{asignatura.Nombre} Eval# {i + 1}",
+                                Nota = (float)(5 * rnd.NextDouble())
+                            };
+                            alumno.Evaluaciones.Add(ev  );
+                        }
+                    }
+                }
             }
+
         }
 
-        private IEnumerable<Alumno> CargarAlumnos()
+        public List<ObjetoEscuelaBase> GetObjetosEscuela()
         {
-            string[] nombre1 = {"Alejandro", "Matías", "Nicolás", "Martín"};
-            string[] nombre2 = {"Juan", "José", "Leonardo", "Joaquín"};
-            string[] apellido1 = {"Lopez", "Perez", "Molina", "Gonzalez"};
+            var listaObj = new List<ObjetoEscuelaBase>();
+                listaObj.Add(Escuela);
+                listaObj.AddRange(Escuela.Cursos);
+                foreach (var curso in Escuela.Cursos)
+                {
+                    listaObj.AddRange(curso.Asignaturas);
+                    listaObj.AddRange(curso.Alumnos);
+                    foreach (var alumno in curso.Alumnos)
+                    {
+                        listaObj.AddRange(alumno.Evaluaciones);
+                    }
+                }
+            return listaObj;
+        }
 
-            var listaAlumnos =  from n1 in nombre1
-                                from n2 in nombre2
-                                from a1 in nombre2
-                                select new Alumno { Nombre=$"{n1} {n2} {a1}" };
-            return listaAlumnos;
+        // ---   METODO QUE TRAE OBJETOS DE LA ESCUELA   --- No necesito sobrecarga de metodos porque es absorvida por la anterios al cargar los bool con true.
+        // public List<ObjetoEscuelaBase> GetObjetosEscuela()
+        // {
+        //     var listaObj = new List<ObjetoEscuelaBase>();
+        //         listaObj.Add(Escuela);
+        //         listaObj.AddRange(Escuela.Cursos);
+        //         foreach (var curso in Escuela.Cursos)
+        //         {
+        //             listaObj.AddRange(curso.Asignaturas);
+        //             listaObj.AddRange(curso.Alumnos);
+        //             foreach (var alumno in curso.Alumnos)
+        //             {
+        //                 listaObj.AddRange(alumno.Evaluaciones);
+        //             }
+        //         }
+        //     return listaObj;
+        // }
+
+        private List<Alumno> GenerarAlumnosAzar(int cantidad)
+        {
+            string[] nombre1 = { "Alejandro", "Matías", "Nicolás", "Martín" };
+            string[] nombre2 = { "Juan", "José", "Leonardo", "Joaquín" };
+            string[] apellido1 = { "Lopez", "Perez", "Molina", "Gonzalez" };
+
+            var listaAlumnos = from n1 in nombre1
+                               from n2 in nombre2
+                               from a1 in apellido1
+                               select new Alumno { Nombre = $"{n1} {n2} {a1}" };
+            return listaAlumnos.OrderBy( (al) => al.UniqueId ).Take(cantidad).ToList();
         }
 
         private void CargarCursos()
@@ -75,6 +131,15 @@ namespace CoreEscuela
                 new Curso() { Nombre = "202", Jornada = TiposJornada.Tarde },
                 new Curso() { Nombre = "302", Jornada = TiposJornada.Tarde }
             };
+
+            Random rnd = new Random();
+            foreach (var c in Escuela.Cursos)
+            {
+                int cantRnd = rnd.Next(5, 20);
+                c.Alumnos = GenerarAlumnosAzar(cantRnd);
+            }
         }
+        #endregion
+
     }
 }
