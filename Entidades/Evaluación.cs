@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 
 namespace CoreEscuela.Entidades
 {
     public class Evaluación: ObjetoEscuelaBase
     {
-        public Alumno Alumnno { get; set; }
+        public Alumno Alumno { get; set; }
 
         public Asignatura Asignatura { get; set; } 
 
@@ -13,7 +12,7 @@ namespace CoreEscuela.Entidades
 
         public override string ToString()
         {
-            return $"{Nota}, {Alumnno.Nombre}, {Asignatura.Nombre}";
+            return $"{Nota}, {Alumno.Nombre}, {Asignatura.Nombre}";
         }
     }
 }

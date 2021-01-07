@@ -14,14 +14,23 @@ namespace CoreEscuela
             var engine = new EscuelaEngine(); 
             engine.Inicializar();
             Printer.DibujarTitulo("Bienvenidos a la escuela");
-            ImprimirCursosEscuela(engine.Escuela);
+            //ImprimirCursosEscuela(engine.Escuela);
 
-            var listaObjetos = engine.GetObjetosEscuela(
-                // traeEvaluaciones: false,
-                // traeAlumnos: false,
-                // traeAsignaturas: false,
-                // traeCursos: false
-                );
+            var diccTemp = engine.GetDiccionarioObjetos();
+
+            engine.ImprimirDiccionario(diccTemp, true);
+
+            // Para qeu funciones debo colocar los parametros de salida y asignar que valores deseo que traiga.
+            // var listaObjetos = engine.GetObjetosEscuela(
+            //     out int conteoEvaluaciones,
+            //     out int conteoAlumnos,
+            //     out int conteoAsignaturas,
+            //     out int conteoCursos,
+            //     traeEvaluaciones: true,
+            //     traeAlumnos: true,
+            //     traeAsignaturas: true,
+            //     traeCursos: true
+            //     );
 
             // --- ESTA INTERFAZ TRAE LISTADO DE ESCUELA, ALUMNOS, CURSOS, ASIGNATURAS, EVALUACIONES --- Pasando los parametros como flase no los traera.
             // var listaObjetos = engine.GetObjetosEscuela();
